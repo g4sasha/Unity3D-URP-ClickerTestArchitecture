@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using UnityEngine;
 
 public class DataStorage : MonoBehaviour
@@ -5,6 +6,7 @@ public class DataStorage : MonoBehaviour
     public static DataStorage Instance;
 
     [SerializeField] bool _resetProgress;
+    [SerializeField, Range(1, 600)] private int AutosaveSecondsInterval = 5;
 
     public int ScorePerClick = 1;
     public int ScorePerSecond = 0;
@@ -43,6 +45,17 @@ public class DataStorage : MonoBehaviour
         }
 
         DontDestroyOnLoad(gameObject);
+
+        AutoSaveCycle();
+    }
+
+    private async void AutoSaveCycle()
+    {
+        while (Application.isPlaying)
+        {
+            Save();
+            await Task.Delay(AutosaveSecondsInterval * 1000);
+        }
     }
 
     public void Save()
@@ -58,6 +71,7 @@ public class DataStorage : MonoBehaviour
         Score = PlayerPrefs.GetInt("Score");
         ScorePerClick = PlayerPrefs.GetInt("ScorePerClick");
         ScorePerSecond = PlayerPrefs.GetInt("ScorePerSecond");
+        EventBus.Instance.DataLoaded?.Invoke();
         Debug.Log("Data loaded");
     }
 }

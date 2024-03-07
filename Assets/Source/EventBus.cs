@@ -17,4 +17,5 @@ public class EventBus
     }
 
     public Action<int> ScoreChanged;
+    public Action DataLoaded;
 }
