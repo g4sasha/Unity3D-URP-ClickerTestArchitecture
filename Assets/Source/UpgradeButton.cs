@@ -10,6 +10,11 @@ public class UpgradeButton : MonoBehaviour, IPointerDownHandler
     public int Cost;
     [SerializeField] private int _costAddition;
 
+    private void Awake()
+    {
+        Cost = DataStorage.Instance.Load(_item);
+    }
+
     private void Start()
     {
        UpdateText();
@@ -18,11 +23,13 @@ public class UpgradeButton : MonoBehaviour, IPointerDownHandler
     private void OnEnable()
     {
         EventBus.Instance.DataLoaded += UpdateText;
+        EventBus.Instance.SavingGame += SaveCost;
     }
 
     private void OnDisable()
     {
         EventBus.Instance.DataLoaded -= UpdateText;
+        EventBus.Instance.SavingGame -= SaveCost;
     }
 
     public void OnPointerDown(PointerEventData eventData)
@@ -61,5 +68,10 @@ public class UpgradeButton : MonoBehaviour, IPointerDownHandler
                 _buttonText.text = $"+{DataStorage.Instance.ScorePerSecond + 1} в секунду стоит {Cost}$";
                 break;
         }
+    }
+
+    private void SaveCost()
+    {
+        DataStorage.Instance.Save(_item, Cost);
     }
 }

@@ -60,10 +60,16 @@ public class DataStorage : MonoBehaviour
 
     public void Save()
     {
+        EventBus.Instance.SavingGame?.Invoke();
         PlayerPrefs.SetInt("Score", Score);
         PlayerPrefs.SetInt("ScorePerClick", ScorePerClick);
         PlayerPrefs.SetInt("ScorePerSecond", ScorePerSecond);
         Debug.Log("Data saved");
+    }
+
+    public void Save(UpgradeItems item, int value)
+    {
+        PlayerPrefs.SetInt(item.ToString(), value);
     }
 
     public void Load()
@@ -73,5 +79,10 @@ public class DataStorage : MonoBehaviour
         ScorePerSecond = PlayerPrefs.GetInt("ScorePerSecond");
         EventBus.Instance.DataLoaded?.Invoke();
         Debug.Log("Data loaded");
+    }
+
+    public int Load(UpgradeItems item)
+    {
+        return PlayerPrefs.GetInt(item.ToString());
     }
 }
